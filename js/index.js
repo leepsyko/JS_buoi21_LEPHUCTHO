@@ -14,7 +14,7 @@ function showList(listShow) {
       <td> ${value.emailE}</td>
       <td> ${value.dateE}</td>
       <td> ${value.officeE}</td>
-      <td> ${value.wageE}</td>
+      <td> ${value.wageE}</td>  
       <td> ${value.typeE}</td>
       <td>
       <button class="btn btn-warning" onclick="selectorEmployee('${value.accountE}')">Chỉnh sửa</button>
@@ -32,13 +32,8 @@ function showList(listShow) {
 
 function addEmployee() {
   // Khúc này là phần thêm đối tượng
-  // add object into array listOfEmployee
-  // document.getElementsByTagName("body")[0].classList.remove("modal-open");
-  // document.getElementById("myModal").classList.remove("show");
-  // document.getElementById("myModal").style.display = "none";
 
   let employeeInput = validateLogIn();
-  // console.log(employeeInput)
   if (!employeeInput) {
     return;
   }
@@ -46,48 +41,15 @@ function addEmployee() {
   listEmploy.push(employeeInput);
 
   // Show on table
-
-  // console.log(document.getElementsByClassName("sp-thongbao"));
-
-  document.getElementById("myModal").classList.remove("show");
-  document.getElementById("myModal").style.display = "";
-
   showList(listEmploy);
+  // hide the form
   $("#myModal").modal("hide");
+  //reset form to empty
+  resetForm();
 }
 
-// 3. Create new object employee with information from form input
+// 4.validated
 
-// function createEmployee() {
-// DOM
-// let accountInput = document.getElementById("tknv").value;
-// let nameInput = document.getElementById("name").value;
-// let emailInput = document.getElementById("email").value;
-// let passWordInput = document.getElementById("password").value;
-// let dateInput = document.getElementById("datepicker").value;
-// let salaryInput = document.getElementById("luongCB").value;
-// let OfficeInput = document.getElementById("chucvu").value;
-// let hourInput = document.getElementById("gioLam").value;
-
-// // create Object
-
-// let employeeInput = new Employee(
-//   accountInput,
-//   nameInput,
-//   emailInput,
-//   passWordInput,
-//   dateInput,
-//   salaryInput,
-//   OfficeInput,
-//   hourInput
-// );
-
-// return employeeInput;
-
-// function to check input is empty or full
-// }
-
-// 4.
 // function for check and return boolean value
 function isRequire(value) {
   if (!value.trim()) {
@@ -289,25 +251,31 @@ function removeEmployee(account) {
 // 8. update employee
 
 function upDateEmployee() {
-
-  let employee = validateLogIn()
-  if(!employee){
-    return
+  //check validate
+  let employee = validateLogIn();
+  if (!employee) {
+    return;
   }
+  // get index of employee with acconutE
+  let index = listEmploy.findIndex((value) => {
+    return value.accountE === employee.accountE;
+  });
+  // replace the employee
+  listEmploy[index] = employee;
 
-  let index =  listEmploy.findIndex((value)=>{
-    return value.accountE === employee.accountE
-  })
+  // show table
+  showList(listEmploy);
+  // resetForm
+  resetForm();
+  // available add button and account input
+  document.getElementById("tknv").disabled = false;
 
-  listEmploy[index] = employee
-
-  showList(listEmploy)
+  document.getElementById("btnThemNV").disabled = false;
+  // hide popup
   $("#myModal").modal("hide");
 }
 
-
-
-// Fill information of employee into form 
+// Fill information of employee into form
 function selectorEmployee(account) {
   let selectEmployee = listEmploy.find((value) => {
     return value.accountE;
@@ -315,7 +283,8 @@ function selectorEmployee(account) {
 
   let accountInput = (document.getElementById("tknv").value =
     selectEmployee.accountE);
-  let nameInput = (document.getElementById("name").value = selectEmployee.nameE);
+  let nameInput = (document.getElementById("name").value =
+    selectEmployee.nameE);
   let emailInput = (document.getElementById("email").value =
     selectEmployee.emailE);
   let passWordInput = (document.getElementById("password").value =
@@ -329,22 +298,47 @@ function selectorEmployee(account) {
   let hourInput = (document.getElementById("gioLam").value =
     selectEmployee.hourWorkE);
 
-    document.getElementById("tknv").disabled = true;
+  // disabled add button and account input
+  document.getElementById("tknv").disabled = true;
 
-    // document.getElementById("btnAdd").disabled = true;
-    $("#myModal").modal("show");
+  document.getElementById("btnThemNV").disabled = true;
+
+  // show popup
+  $("#myModal").modal("show");
 }
-
 
 // 9. find employee with classification
-function  findEmployee() {
-  let seek = document.getElementById("searchName").value
-  seek = seek.trim().toLowerCase()
+function findEmployee() {
+  let seek = document.getElementById("searchName").value;
+  seek = seek.trim().toLowerCase();
 
-  let newListSeek = listEmploy.filter((value)=>{
-    let range = value.typeE.trim().toLowerCase()
-    return range.includes(seek)
-  })
+  let newListSeek = listEmploy.filter((value) => {
+    let range = value.typeE.trim().toLowerCase();
+    return range.includes(seek);
+  });
 
-  showList(newListSeek)
+  showList(newListSeek);
 }
+
+// function reset form
+
+function resetForm() {
+  let accountInput = (document.getElementById("tknv").value = "");
+  let nameInput = (document.getElementById("name").value = "");
+  let emailInput = (document.getElementById("email").value = "");
+  let passWordInput = (document.getElementById("password").value = "");
+  let dateInput = (document.getElementById("datepicker").value = "");
+  let salaryInput = (document.getElementById("luongCB").value = "");
+  let OfficeInput = (document.getElementById("chucvu").value = "");
+  let hourInput = (document.getElementById("gioLam").value = "");
+}
+
+// reset form when click "Đóng" button
+document.getElementById("btnDong").onclick = () => {
+  document.getElementById("tknv").disabled = false;
+
+  document.getElementById("btnThemNV").disabled = false;
+
+  resetForm();
+};
+
